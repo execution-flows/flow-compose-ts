@@ -2,11 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-import type { FlowFunction } from "@/flow-compose/types";
+import type { FlowFunction } from "../src";
 import { describe, expect, it, vi } from "vitest";
-import { flow } from "@/flow-compose/flow";
-import { flowFunction } from "@/flow-compose/flow-function";
-import { flowProperty } from "@/flow-compose/flow-property";
+import { flow } from "../src";
+import { flowFunction } from "../src";
+import { flowProperty } from "../src";
 
 describe("flow with flow property", () => {
   it("caches a nullary property result across calls within the same invocation", () => {

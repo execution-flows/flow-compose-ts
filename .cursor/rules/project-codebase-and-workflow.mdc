@@ -9,7 +9,7 @@ alwaysApply: true
 
 - Name: `@execution-flows/flow-compose` (npm)
 - Language: TypeScript 5.x; tests with Vitest; build via `tsc` -> `dist/`
-- Imports: tests and `flow-function.ts` use alias `@/flow-compose/*`
+- Imports: tests and `flow-function.ts`
 
 ## Purpose
 

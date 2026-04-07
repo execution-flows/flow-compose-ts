@@ -1,9 +1,10 @@
 {
   "name": "@execution-flows/flow-compose",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "publishConfig": {
     "access": "public"
   },
+  "description": "A TypeScript implementation of Execution Flows using the Flow Compose pattern.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -27,7 +28,6 @@
     "url": "https://github.com/execution-flows/flow-compose-ts/issues"
   },
   "homepage": "https://github.com/execution-flows/flow-compose-ts#readme",
-  "description": "",
   "devDependencies": {
     "@eslint/js": "^9.37.0",
     "@types/node": "^25.5.0",
