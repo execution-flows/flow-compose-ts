@@ -1,9 +1,8 @@
 {
   "name": "@execution-flows/flow-compose",
-  "version": "0.1.0-dev1",
+  "version": "0.1.0",
   "publishConfig": {
-    "access": "public",
-    "tag": "dev"
+    "access": "public"
   },
   "description": "A TypeScript implementation of Execution Flows using the Flow Compose pattern.",
   "main": "dist/index.js",
