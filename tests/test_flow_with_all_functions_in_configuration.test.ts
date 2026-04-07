@@ -2,10 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-import type { FlowFunction } from "@/flow-compose/types";
-import { flowFunction } from "@/flow-compose/flow-function";
+import type { FlowFunction } from "../src";
+import { flowFunction } from "../src";
 import { describe, it, expect, vi } from "vitest";
-import { flow } from "@/flow-compose/flow";
+import { flow } from "../src";
 
 describe("flow with all functions in configuration", () => {
   it("all flow functions are explicitly declared in the flow context", () => {

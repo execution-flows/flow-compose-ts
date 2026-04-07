@@ -66,12 +66,22 @@ function resetCachedRunners(runners: Runners): void {
   }
 }
 
+export function flow<R>(
+  flowBody: FlowFunctionInvoker<R>,
+): BrandedComposedFlow & FlowFunction<R>;
 export function flow<R, const C extends Partial<FlowContext> = Partial<FlowContext>>(
   flowContext: C,
   flowBody: FlowFunctionInvoker<R>,
 ): FlowContextHasArgument<C> extends true
   ? BrandedComposedFlow & ((args: ArgsFromMarkers<C>) => R)
-  : BrandedComposedFlow & FlowFunction<R> {
+  : BrandedComposedFlow & FlowFunction<R>;
+export function flow<R, const C extends Partial<FlowContext> = Partial<FlowContext>>(
+  flowContextOrBody: C | FlowFunctionInvoker<R>,
+  flowBody?: FlowFunctionInvoker<R>,
+): BrandedComposedFlow & ((args: ArgsFromMarkers<C>) => R) | BrandedComposedFlow & FlowFunction<R> {
+  const flowContext = (flowBody ? flowContextOrBody : {}) as C;
+  const actualFlowBody = (flowBody ? flowBody : flowContextOrBody) as FlowFunctionInvoker<R>;
+
   if (!contextHasFlowArgument(flowContext)) {
     const flowRunners: Runners = {};
     Object.entries(flowContext).forEach(([flowFunctionName, entry]) => {
@@ -81,7 +91,7 @@ export function flow<R, const C extends Partial<FlowContext> = Partial<FlowConte
       wireContextRunner(flowRunners, flowFunctionName, entry);
     });
 
-    const bodyRunner = flowBody(flowRunners);
+    const bodyRunner = actualFlowBody(flowRunners);
 
     const hasCached = Object.values(flowRunners).some(isCachedRunner);
     if (hasCached) {
@@ -89,14 +99,10 @@ export function flow<R, const C extends Partial<FlowContext> = Partial<FlowConte
         resetCachedRunners(flowRunners);
         return bodyRunner();
       };
-      return brandComposedFlow(wrapped) as FlowContextHasArgument<C> extends true
-        ? BrandedComposedFlow & ((args: ArgsFromMarkers<C>) => R)
-        : BrandedComposedFlow & FlowFunction<R>;
+      return brandComposedFlow(wrapped) as BrandedComposedFlow & FlowFunction<R>;
     }
 
-    return brandComposedFlow(bodyRunner) as FlowContextHasArgument<C> extends true
-      ? BrandedComposedFlow & ((args: ArgsFromMarkers<C>) => R)
-      : BrandedComposedFlow & FlowFunction<R>;
+    return brandComposedFlow(bodyRunner) as BrandedComposedFlow & FlowFunction<R>;
   }
 
   return brandComposedFlow((args: ArgsFromMarkers<C>) => {
@@ -130,8 +136,6 @@ export function flow<R, const C extends Partial<FlowContext> = Partial<FlowConte
 
     resetCachedRunners(flowRunners);
 
-    return flowBody(flowRunners)();
-  }) as FlowContextHasArgument<C> extends true
-    ? BrandedComposedFlow & ((args: ArgsFromMarkers<C>) => R)
-    : BrandedComposedFlow & FlowFunction<R>;
+    return actualFlowBody(flowRunners)();
+  }) as BrandedComposedFlow & ((args: ArgsFromMarkers<C>) => R);
 }

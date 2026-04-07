@@ -6,8 +6,8 @@ import type {
   FlowFunctionBody,
   FlowFunctionInvoker,
   Runners,
-} from "@/flow-compose/types";
-import { flowFunction } from "@/flow-compose/flow-function";
+} from "./types";
+import { flowFunction } from "./flow-function";
 
 export function flowProperty<R, RunnersMap extends Runners = Runners>(
   functionBody: FlowFunctionBody<R, RunnersMap>,

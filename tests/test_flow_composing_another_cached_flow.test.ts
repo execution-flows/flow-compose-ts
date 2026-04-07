@@ -1,10 +1,10 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-import type { FlowFunction } from "@/flow-compose/types";
-import { flowFunction } from "@/flow-compose/flow-function";
+import type { FlowFunction } from "../src";
+import { flowFunction } from "../src";
 import { describe, it, expect, vi } from "vitest";
-import { flow, Flow } from "@/flow-compose/flow";
+import { flow, Flow } from "../src";
 
 describe("flow composing another cached flow", () => {
   it("caches the inner composed flow result across calls within the same invocation", () => {

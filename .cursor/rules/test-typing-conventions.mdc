@@ -9,7 +9,7 @@ alwaysApply: false
 ## Flow type system
 
 - `FlowFunction<R>` — nullary runner (no input args), called as `runner()`.
-- `Flow<R, Input>` — composed flow with arguments, called as `runner(args)`. Exported from `@/flow-compose/flow` as both a type and a runtime identity wrapper.
+- `Flow<R, Input>` — composed flow with arguments, called as `runner(args)`. Exported from `../src` as both a type and a runtime identity wrapper.
 
 ## Runner type annotations in `flowFunction` bodies
 

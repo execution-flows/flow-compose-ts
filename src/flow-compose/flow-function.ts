@@ -7,10 +7,10 @@ import type {
     FlowFunctionBody,
     FlowFunctionInvoker,
     Runners
-} from "@/flow-compose/types";
-import { isFlowArgument } from "@/flow-compose/flow-argument";
-import { isComposedFlow } from "@/flow-compose/flow-composed";
-import { markCachedRunner } from "@/flow-compose/cached";
+} from "./types";
+import { isFlowArgument } from "./flow-argument";
+import { isComposedFlow } from "./flow-composed";
+import { markCachedRunner } from "./cached";
 
 export type FlowFunctionOptions = {
   cached?: boolean;
