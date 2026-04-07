@@ -1,0 +1,10 @@
+---
+description: Prefer .cursor rules as primary project context source
+alwaysApply: true
+---
+
+# Context Source Preference
+
+- Treat `.cursor/rules/*.mdc` as the primary source of project guidance.
+- Keep behavior expectations and workflow requirements in `.cursor/rules`.
+- Mirror updates from `context/` into `.cursor/rules` when needed.

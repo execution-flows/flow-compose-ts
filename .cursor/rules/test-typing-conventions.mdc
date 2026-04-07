@@ -1,0 +1,50 @@
+---
+description: Typing conventions for test and source files
+globs: "{src,tests}/**/*.ts"
+alwaysApply: false
+---
+
+# Typing Conventions
+
+## Flow type system
+
+- `FlowFunction<R>` — nullary runner (no input args), called as `runner()`.
+- `Flow<R, Input>` — composed flow with arguments, called as `runner(args)`. Exported from `@/flow-compose/flow` as both a type and a runtime identity wrapper.
+
+## Runner type annotations in `flowFunction` bodies
+
+Use body parameter annotation style, not `flowFunction<R, RunnersMap>` generics:
+
+```typescript
+// GOOD
+flowFunction(({ greeting }: { greeting: FlowFunction<string> }): string => greeting())
+
+// BAD
+flowFunction<string, { greeting: FlowFunction<string> }>(({ greeting }) => greeting())
+```
+
+## Composed flow runners
+
+Use `Flow<R, Input>` for runners that are composed flows with arguments:
+
+```typescript
+// GOOD — named args type + Flow<R, Input>
+type GreetArgs = { name: string };
+flowFunction(({ greet }: { greet: Flow<string, GreetArgs> }): string => greet({ name: "Ada" }))
+
+// BAD — inline anonymous type or manual function signature
+flowFunction(({ greet }: { greet: (input: { name: string }) => string }) => greet({ name: "Ada" }))
+```
+
+Use `FlowFunction<R>` for nullary runners (no input args).
+
+## Named types
+
+Always define named types for argument objects. Never use inline anonymous object types.
+
+## Forbidden patterns
+
+- Never use `undefined` as a type or return type — use `void` instead.
+- Never use `?` (optional chaining) or `!` (non-null assertion) in code.
+- Never use `return undefined` — if a function returns nothing, type it as `void` and omit the return.
+- Never define manual function type aliases for composed flows — use `Flow<R, Input>` instead.

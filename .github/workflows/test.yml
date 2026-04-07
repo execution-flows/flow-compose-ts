@@ -1,0 +1,57 @@
+name: _Typecheck and test node versions
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+  test_node_18:
+    needs: [lint, typecheck]
+    uses: ./.github/workflows/node_version_tests.yaml
+    with:
+      NODE_VERSION: "18"
+
+  test_node_20:
+    needs: [lint, typecheck]
+    uses: ./.github/workflows/node_version_tests.yaml
+    with:
+      NODE_VERSION: "20"
+
+  test_node_22:
+    needs: [lint, typecheck]
+    uses: ./.github/workflows/node_version_tests.yaml
+    with:
+      NODE_VERSION: "22"
+
+  test_node_24:
+    needs: [lint, typecheck]
+    uses: ./.github/workflows/node_version_tests.yaml
+    with:
+      NODE_VERSION: "24"

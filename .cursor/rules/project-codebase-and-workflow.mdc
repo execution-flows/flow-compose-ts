@@ -1,0 +1,52 @@
+---
+description: Project codebase context and required validation workflow
+alwaysApply: true
+---
+
+# flow-compose-ts Codebase Context
+
+## Package
+
+- Name: `@execution-flows/flow-compose` (npm)
+- Language: TypeScript 5.x; tests with Vitest; build via `tsc` -> `dist/`
+- Imports: tests and `flow-function.ts` use alias `@/flow-compose/*`
+
+## Purpose
+
+This library composes flows from named flow functions. A flow context maps keys to invokers (and optionally `flowArgument` markers). Each invoker receives `runners` and returns a callable runner (`FlowFunction<R>`). Nested composition extends runners via shallow copy so root `flow()` arguments are visible in nested `flowFunction` invokers unless shadowed.
+
+## Source Layout
+
+- `src/flow-compose/types.ts`: Core types including `FlowFunction`, `FlowFunctionInvoker`, `Runners`, `FlowContext`, and marker-driven argument types.
+- `src/flow-compose/flow-argument.ts`: `flowArgument` overloads, default sentinel behavior, marker types, and `isFlowArgument`.
+- `src/flow-compose/flow.ts`: `flow(flowContext, flowBody)` wiring. If arguments are declared, returns deferred runner `(input) => ...` and exposes values to runners as nullary `FlowFunction`s.
+- `src/flow-compose/flow-function.ts`: `flowFunction(body)` and `flowFunction(partialContext, body)` invoker wiring with local context.
+
+## Type Model
+
+- `Runners`: registry of runnable functions available to a body.
+- `FlowFunctionInvoker<R>`: `(runners) => FlowFunction<R>`.
+- `FlowContext`: map of invokers or `flowArgument()` markers; undefined entries are skipped.
+
+## Flow Inputs
+
+- Use `flowArgument<T>()` for required input keys.
+- Use `flowArgument(defaultValue)` for optional keys with defaults.
+- Composed runners accept one input object; inside flows, values are consumed as nullary runner calls.
+
+## Test Coverage Areas
+
+- Single nullary function behavior.
+- Local nested `flowFunction` composition without `flowArgument`.
+- Required vs default flow arguments.
+- Nested function stacks with root `flowArgument`.
+
+# Required Validation Workflow
+
+After each code generation or file edit, run:
+
+- `npm run typecheck`
+- `npm run lint`
+- `npm run test`
+
+If any command fails, fix the issue and re-run all three until they pass.

@@ -1,0 +1,23 @@
+name: _Node version tests
+
+on:
+  workflow_call:
+    inputs:
+      NODE_VERSION:
+        required: true
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
