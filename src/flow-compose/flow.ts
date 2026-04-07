@@ -80,7 +80,7 @@ export function flow<R, const C extends Partial<FlowContext> = Partial<FlowConte
   flowBody?: FlowFunctionInvoker<R>,
 ): BrandedComposedFlow & ((args: ArgsFromMarkers<C>) => R) | BrandedComposedFlow & FlowFunction<R> {
   const flowContext = (flowBody ? flowContextOrBody : {}) as C;
-  const actualFlowBody = (flowBody ? flowBody : flowContextOrBody) as FlowFunctionInvoker<R>;
+  const actualFlowBody = (flowBody ?? flowContextOrBody) as FlowFunctionInvoker<R>;
 
   if (!contextHasFlowArgument(flowContext)) {
     const flowRunners: Runners = {};
