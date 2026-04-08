@@ -108,10 +108,14 @@ export function flowFunction<R, RunnersMap extends Runners = Runners>(
       return cachedRunner as unknown as FlowFunction<R>;
     }
 
-    function runner() {
-      return body(flowFunctionRunners as RunnersMap);
+    function runner(...args: unknown[]) {
+      const result = body(flowFunctionRunners as RunnersMap);
+      if (typeof result === "function") {
+        return (result as (...args: unknown[]) => unknown)(...args);
+      }
+      return result;
     }
-    return runner;
+    return runner as unknown as FlowFunction<R>;
   }
   return invoker;
 }

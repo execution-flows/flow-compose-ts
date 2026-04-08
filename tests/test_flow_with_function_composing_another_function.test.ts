@@ -3,9 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import type { FlowFunction } from "../src";
-import { flowFunction } from "../src";
+import { flow, flowFunction, flowArgument } from "../src";
 import { describe, it, expect, vi } from "vitest";
-import { flow } from "../src";
 
 describe("flow with function composing another function", () => {
   it("flow function accesses another function from the same flow context", () => {
@@ -34,5 +33,45 @@ describe("flow with function composing another function", () => {
     expect(greetUsingGreetingMock).toHaveBeenCalledOnce();
     expect(greetUsingGreetingMock).toHaveBeenCalledWith("Hello World!");
     expect(greetHelloWorldMock).toHaveBeenCalledOnce();
+  });
+
+  it('flowFunction inner async body is invoked, not just returned', async () => {
+    let ran = false;
+
+    const doWork = flowFunction(
+      ({ item }: { item: () => string }) => {
+        return async () => {
+          await Promise.resolve();
+          void item();
+          ran = true;
+        };
+      },
+    );
+
+    const testFlow = flow(
+      { item: flowArgument<string>(), doWork },
+      flowFunction(async ({ doWork }: { doWork: () => Promise<void> }) => {
+        await doWork();
+      }),
+    );
+
+    await testFlow({ item: 'test' });
+    expect(ran).toBe(true);
+  });
+
+  it('flowFunction returns the inner function result, not the function itself', async () => {
+    const doWork = flowFunction(() => {
+      return async () => await Promise.resolve(42);
+    });
+
+    const testFlow = flow(
+      { doWork },
+      flowFunction(({ doWork }: { doWork: () => Promise<number> }) => {
+        return doWork();
+      }),
+    );
+
+    const result = await testFlow();
+    expect(result).toBe(42);
   });
 });
