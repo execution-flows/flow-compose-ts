@@ -6,7 +6,7 @@ import type {
   FlowArgumentMarkerRequired,
   FlowArgumentMarkerWithDefault,
 } from "./flow-argument";
-import type { ComposedFlowCallable } from "./flow-composed";
+import type { ComposedFlowLike } from "./flow-composed";
 
 export type FlowFunction<R> = (...args: never[]) => R;
 
@@ -18,7 +18,7 @@ export type FlowFunctionInvoker<R> = (runners: Record<string, FlowFunction<unkno
 
 export type Runners = Record<string, FlowFunction<unknown>>;
 
-export type FlowContextEntry = FlowFunctionInvoker<unknown> | FlowArgumentMarker | ComposedFlowCallable;
+export type FlowContextEntry = FlowFunctionInvoker<unknown> | FlowArgumentMarker | ComposedFlowLike;
 
 export type FlowContext = Partial<Record<string, FlowContextEntry>>;
 
@@ -45,6 +45,9 @@ export type ArgsFromMarkers<C> = {
 } & {
   [K in FlowArgumentKeysWithDefault<C>]?: MarkerValueT<C[K]>;
 };
+
+/** Args object inferred from `flowArgument` markers in a flow context map (alias of {@link ArgsFromMarkers}). */
+export type InferFlowArgs<C extends Partial<FlowContext>> = ArgsFromMarkers<C>;
 
 export type FlowContextHasArgument<C> = true extends {
   [K in keyof C]: C[K] extends FlowArgumentMarker ? true : false;

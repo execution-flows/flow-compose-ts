@@ -7,7 +7,11 @@ export type BrandedComposedFlow = {
   readonly [COMPOSED_FLOW]: true;
 };
 
-export type ComposedFlowCallable = BrandedComposedFlow & ((...args: never[]) => unknown);
+/** Structural callable shape for nested `flow()` results in context maps (no compile-time brand). */
+export type ComposedFlowLike = (...args: never[]) => unknown;
+
+/** Composed flow value after runtime branding; used by `isComposedFlow` narrowing. */
+export type ComposedFlowCallable = BrandedComposedFlow & ComposedFlowLike;
 
 export function brandComposedFlow<F extends (...args: never[]) => unknown>(fn: F): F & BrandedComposedFlow {
   Object.defineProperty(fn, COMPOSED_FLOW, {
