@@ -64,7 +64,7 @@ export function flowFunction<R, RunnersMap extends Runners = Runners>(
             flowFunctionRunners[flowFunctionName] = entry;
             return;
         }
-        flowFunctionRunners[flowFunctionName] = entry(flowFunctionRunners);
+        flowFunctionRunners[flowFunctionName] = (entry as FlowFunctionInvoker<unknown>)(flowFunctionRunners);
     });
 
     if (isCached) {
