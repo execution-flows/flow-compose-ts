@@ -7,26 +7,38 @@ import type {
   FlowFunctionInvoker,
   Runners,
 } from "./types";
-import { flowFunction } from "./flow-function";
+import { flowFunction, type FlowFunctionOptions } from "./flow-function";
+
+export type FlowPropertyOptions = Omit<FlowFunctionOptions, "cached">;
 
 export function flowProperty<R, RunnersMap extends Runners = Runners>(
   functionBody: FlowFunctionBody<R, RunnersMap>,
+  options?: FlowPropertyOptions,
 ): FlowFunctionInvoker<R>;
 export function flowProperty<R, RunnersMap extends Runners = Runners>(
   functionContext: Partial<FlowContext>,
   functionBody: FlowFunctionBody<R, RunnersMap>,
+  options?: FlowPropertyOptions,
 ): FlowFunctionInvoker<R>;
 export function flowProperty<R, RunnersMap extends Runners = Runners>(
   functionContextOrBody: Partial<FlowContext> | FlowFunctionBody<R, RunnersMap>,
-  maybeFunctionBody?: FlowFunctionBody<R, RunnersMap>,
+  maybeFunctionBody?: FlowFunctionBody<R, RunnersMap> | FlowPropertyOptions,
+  maybeOptions?: FlowPropertyOptions,
 ): FlowFunctionInvoker<R> {
   if (typeof functionContextOrBody === "function") {
-    return flowFunction(functionContextOrBody, { cached: true });
+    let propertyOptions: FlowPropertyOptions | undefined;
+    if (maybeFunctionBody !== undefined && typeof maybeFunctionBody !== "function") {
+      propertyOptions = maybeFunctionBody;
+    }
+    return flowFunction(functionContextOrBody, { cached: true, ...propertyOptions });
   }
 
   if (typeof maybeFunctionBody !== "function") {
     throw new Error("flowProperty requires a function body");
   }
 
-  return flowFunction(functionContextOrBody, maybeFunctionBody, { cached: true });
+  return flowFunction(functionContextOrBody, maybeFunctionBody, {
+    cached: true,
+    ...(maybeOptions ?? {}),
+  });
 }
