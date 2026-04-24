@@ -4,5 +4,9 @@
 
 export type { ArgsFromMarkers, FlowFunction, InferFlowArgs } from "./flow-compose/types";
 export { flow, flowArgument, Flow } from "./flow-compose/flow";
-export { flowFunction } from "./flow-compose/flow-function";
-export { flowProperty } from "./flow-compose/flow-property";
+export {
+  flowFunction,
+  type FlowFunctionOptions,
+  type FlowFunctionResolve,
+} from "./flow-compose/flow-function";
+export { flowProperty, type FlowPropertyOptions } from "./flow-compose/flow-property";

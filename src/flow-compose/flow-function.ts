@@ -12,8 +12,18 @@ import { isFlowArgument } from "./flow-argument";
 import { isComposedFlow } from "./flow-composed";
 import { markCachedRunner } from "./cached";
 
+export type FlowFunctionResolve = "thunk" | "value";
+
 export type FlowFunctionOptions = {
   cached?: boolean;
+  /**
+   * How to resolve the body's return value.
+   * - `"thunk"` (default): if the body returns a function, treat it as a deferred
+   *   factory — invoke it on consumer call, and cache per-args when `cached: true`.
+   * - `"value"`: return the body's result as-is, even when it is a function.
+   *   Use when the step's value is a function passed as data (mappers, predicates, callbacks).
+   */
+  resolve?: FlowFunctionResolve;
 };
 
 export function flowFunction<R, RunnersMap extends Runners = Runners>(
@@ -50,6 +60,7 @@ export function flowFunction<R, RunnersMap extends Runners = Runners>(
   }
 
   const isCached = options?.cached === true;
+  const resolveStrategy: FlowFunctionResolve = options?.resolve ?? "thunk";
 
   function invoker(runners: Runners) {
     const flowFunctionRunners: Runners = { ...runners };
@@ -77,7 +88,10 @@ export function flowFunction<R, RunnersMap extends Runners = Runners>(
       const cachedRunner = (...args: unknown[]): unknown => {
         if (!initialized) {
           const result = body(flowFunctionRunners as RunnersMap);
-          if (typeof result === "function") {
+          if (resolveStrategy === "value") {
+            behavior = "value";
+            cachedValue = result;
+          } else if (typeof result === "function") {
             behavior = "function";
             innerFn = result as (...args: unknown[]) => unknown;
             argCache = new Map();
@@ -110,7 +124,7 @@ export function flowFunction<R, RunnersMap extends Runners = Runners>(
 
     function runner(...args: unknown[]) {
       const result = body(flowFunctionRunners as RunnersMap);
-      if (typeof result === "function") {
+      if (resolveStrategy === "thunk" && typeof result === "function") {
         return (result as (...args: unknown[]) => unknown)(...args);
       }
       return result;
